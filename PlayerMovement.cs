@@ -67,14 +67,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump()
     {
+        // Edit the velocity of y with Math Sqrt and multiply jumpHeight by -2f and by gravity to force him to back to ground
         velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
     }
     
     private float GetCurrentSpeed(float verticalInput)
     {
+        // Check if the player on ground, true = adjust the speed to normal, false?= put it to air speed.
         float baseSpeed = isGrounded ? speed : inAirSpeed;
+        
+        // If player pressed the Left Shift and he is on ground ajust the speed to sprint if false adjust the speed to the base speed
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : baseSpeed;
 
+        // If player press 'C' key on the keyboard adjust the current speed to crouch speed
         if (Input.GetKey(KeyCode.C))
         {
             currentSpeed = crouchSpeed;
@@ -83,9 +88,10 @@ public class PlayerMovement : MonoBehaviour
         // Reduce speed when moving backward
         if (verticalInput < 0)
         {
+            // Multiply the current speed by 0.68f to reduce it
             currentSpeed *= 0.68f;
         }
-
+        
         return currentSpeed;
     }
 }
