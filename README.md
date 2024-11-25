@@ -1,3 +1,5 @@
+> Simple
+
 # PlayerMovement
 This is a character movement control script for unity without using RigidBody
 
@@ -9,6 +11,3 @@ This is a character movement control script for unity without using RigidBody
 - Adjust backward speed
 - Ground checker
 - Velocity normalize
-
-
-> Simple
