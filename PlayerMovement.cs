@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (verticalInput < 0) 
         {
-            return baseSpeed * 0.68f; // Reduce the base speed when player going backwards
+            return baseSpeed * 0.65f; // Reduce the base speed when player going backwards
         }
 
         return baseSpeed;
