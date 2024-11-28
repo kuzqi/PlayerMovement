@@ -1,36 +1,45 @@
 using UnityEngine;
 
-
 public class PlayerController : MonoBehaviour
 {
 
-    [Header("Values")]
+    [Header("Movement")]
+    [SerializeField] private CharacterController playerController;
     [SerializeField] private float speed = 6f;
-    [SerializeField] private float inAirSpeed = 5f;
+    [SerializeField] private float inAirSpeed = 4f;
     [SerializeField] private float crouchSpeed = 3f;
     [SerializeField] private float sprintSpeed = 7f;
-    [SerializeField] private float gravity = -9.81f;
-    [SerializeField] private float jumpHeight = 1.72f;
+    [SerializeField] private float jumpHeight = 1.5f;
     private Vector3 velocity;
-
-    [Header("Controller")]
-    [SerializeField] private CharacterController playerController;
+    private float gravity = -25f;
 
     [Header("Ground")]
-    [SerializeField] private float groundDistance = 0.5f;
+    [SerializeField] private float groundDistance = 0.25f;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Transform groundChecker;
     private bool isGrounded;
 
+    [Header("Camera")]
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private float lookSpeed = 2f;
+    [SerializeField] private float lookXLimit = 45f;
+    private float rotationX = 0;
 
     private void Awake()
     {
         playerController = GetComponent<CharacterController>();
     }
 
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    
     private void Update()
     {
         HandleInput();
+        HandleCamera();
     }
 
     private void FixedUpdate()
@@ -38,14 +47,23 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
+    private void HandleCamera()
+    {
+        rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+        
+    }
+
     private void HandleInput()
     {
-        // Input handling moved here for better responsiveness
+
         isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0) 
         {
-            velocity.y = -2f; // Minor downward force to stick to the ground
+            velocity.y = -2f; 
         }
 
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -61,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 movement = (transform.right * x + transform.forward * z).normalized;
         
-        // Check if the player is trying to move
+
         if (movement.magnitude > 0)
         {
             float currentSpeed = GetCurrentSpeed(z);
@@ -78,7 +96,6 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyGravity()
     {
-        // Update vertical velocity
         velocity.y += gravity * Time.fixedDeltaTime;
         playerController.Move(velocity * Time.fixedDeltaTime);
     }
@@ -87,7 +104,6 @@ public class PlayerController : MonoBehaviour
     {
         float baseSpeed = isGrounded ? speed : inAirSpeed;
 
-        // Select current speed based on player's actions
         if (Input.GetKey(KeyCode.LeftShift)) 
         {
             return sprintSpeed;
@@ -98,7 +114,7 @@ public class PlayerController : MonoBehaviour
         }
         if (verticalInput < 0) 
         {
-            return baseSpeed * 0.65f; // Reduce the base speed when player going backwards
+            return baseSpeed * 0.65f;
         }
 
         return baseSpeed;
