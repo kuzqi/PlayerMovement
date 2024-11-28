@@ -1,9 +1,7 @@
 using UnityEngine;
 
-/*
-* @author kuzqi
-*/
-public class PlayerMovement : MonoBehaviour
+
+public class PlayerController : MonoBehaviour
 {
 
     [Header("Values")]
@@ -13,16 +11,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float sprintSpeed = 7f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float jumpHeight = 1.72f;
-
     private Vector3 velocity;
-    private CharacterController playerController;
+
+    [Header("Controller")]
+    [SerializeField] private CharacterController playerController;
 
     [Header("Ground")]
     [SerializeField] private float groundDistance = 0.5f;
-    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private LayerMask groundMask;
     [SerializeField] private Transform groundChecker;
-
     private bool isGrounded;
+
 
     private void Awake()
     {
@@ -42,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
     private void HandleInput()
     {
         // Input handling moved here for better responsiveness
-        isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundLayerMask);
+        isGrounded = Physics.CheckSphere(groundChecker.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0) 
         {
